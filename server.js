@@ -1,4 +1,3 @@
-const { debug } = require('console');
 const express = require('express');
 const mongoose = require('mongoose');
 const logger = require('morgan');
@@ -69,6 +68,17 @@ app.post('/api/workouts', ({ body }, res) => {
     db.Workout.create(body)
     .then(dbWorkout => {
         res.status(200).json(dbWorkout);
+    })
+    .catch(err => {
+        res.status(400).json(err);
+    });
+});
+
+app.get('/api/workouts/range', (req, res) => {
+    db.Workout.find({})
+    .sort({ date: -1 })
+    .then(dbWorkout => {
+        res.json(dbWorkout.slice(0,7));
     })
     .catch(err => {
         res.status(400).json(err);
