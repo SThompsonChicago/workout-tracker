@@ -18,6 +18,8 @@ app.use(express.static('public'));
 
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", { 
     useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
     useFindAndModify: false
  });
 
@@ -48,8 +50,7 @@ app.put('/api/workouts/:id', ({ body, params }, res) => {
     db.Workout.findByIdAndUpdate(
         params.id,
         {
-            $push: { exercises: body },
-            $inc: { totalDuration: body.duration },
+            $push: { exercises: body }
         },
         {
             new: true,
