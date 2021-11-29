@@ -6,7 +6,7 @@ const path = require("path");
 
 const PORT = process.env.PORT || 3000;
 
-const db = require('./models');
+const db = require('./models/index');
 
 const app = express();
 
@@ -35,7 +35,7 @@ app.get('/stats', (req, res) =>
 );
 
 app.get('/api/workouts', (req, res) => {
-    db.find({})
+    db.Workout.find({})
         .sort({ date: -1 })
         .then(dbWorkout => {
             res.json(dbWorkout);
@@ -46,7 +46,7 @@ app.get('/api/workouts', (req, res) => {
 });
 
 app.put('/api/workouts/:id', ({ body, params }, res) => {
-    db.findByIdAndUpdate(
+    db.Workout.findByIdAndUpdate(
         params.id,
         {
             $push: { exercises: body },
@@ -66,7 +66,7 @@ app.put('/api/workouts/:id', ({ body, params }, res) => {
 });
 
 app.post('/api/workouts', ({ body }, res) => {
-    db.create(body)
+    db.Workout.create(body)
     .then(dbWorkout => {
         res.status(200).json(dbWorkout);
     })
@@ -74,6 +74,8 @@ app.post('/api/workouts', ({ body }, res) => {
         res.status(400).json(err);
     });
 });
+
+
 
 app.listen(PORT, () => {
     console.log(`Workout Tracker running on port ${PORT}`);
