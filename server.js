@@ -1,3 +1,4 @@
+const { debug } = require('console');
 const express = require('express');
 const mongoose = require('mongoose');
 const logger = require('morgan');
@@ -5,7 +6,7 @@ const path = require("path");
 
 const PORT = process.env.PORT || 3000;
 
-const Workout = require('./models/Workout');
+const db = require('./models');
 
 const app = express();
 
@@ -34,7 +35,7 @@ app.get('/stats', (req, res) =>
 );
 
 app.get('/api/workouts', (req, res) => {
-    Workout.find({})
+    db.find({})
         .sort({ date: -1 })
         .then(dbWorkout => {
             res.json(dbWorkout);
@@ -45,7 +46,7 @@ app.get('/api/workouts', (req, res) => {
 });
 
 app.put('/api/workouts/:id', ({ body, params }, res) => {
-    Workout.findByIdAndUpdate(
+    db.findByIdAndUpdate(
         params.id,
         {
             $push: { exercises: body },
@@ -65,7 +66,7 @@ app.put('/api/workouts/:id', ({ body, params }, res) => {
 });
 
 app.post('/api/workouts', ({ body }, res) => {
-    Workout.create(body)
+    db.create(body)
     .then(dbWorkout => {
         res.status(200).json(dbWorkout);
     })
