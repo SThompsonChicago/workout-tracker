@@ -40,23 +40,12 @@ app.get('/stats', (req, res) =>
 );
 
 app.get('/api/workouts', (req, res) => {
-    // db.Workout.find({})
-    //     .sort({ date: -1 })
-    //     .then(dbWorkout => {
-    //         res.json(dbWorkout);
-    //     })
-    //     .catch(err => {
-    //         res.status(400).json(err);
-    //     });
-
     db.Workout.aggregate([
         {
             $addFields: {
-                totalDuration: { $sum: "$exercises.duration" },
-                totalQuiz: { $sum: "$quiz" }
+                totalDuration: { $sum: "$exercises.duration" }
             }
         }
-
     ])
 
         .then(dbWorkout => {
@@ -97,10 +86,18 @@ app.post('/api/workouts', ({ body }, res) => {
 });
 
 app.get('/api/workouts/range', (req, res) => {
-    db.Workout.find({})
-        .sort({ date: -1 })
+    db.Workout.aggregate([
+        {
+            $addFields: {
+                totalDuration: { $sum: "$exercises.duration" }
+            }
+        }
+    ])
+        .sort({ _id: -1 })
+        .limit(7)
+        .sort({ _id: 1 })
         .then(dbWorkout => {
-            res.json(dbWorkout.slice(0, 7));
+            res.json(dbWorkout);
         })
         .catch(err => {
             res.status(400).json(err);
